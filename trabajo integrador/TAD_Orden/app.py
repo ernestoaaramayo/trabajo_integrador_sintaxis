@@ -80,7 +80,7 @@ while(continuar == True):
             i+=1
     
     elif opcion == 6:
-        
+        .    
     
                     
     # elif opcion == 7:
