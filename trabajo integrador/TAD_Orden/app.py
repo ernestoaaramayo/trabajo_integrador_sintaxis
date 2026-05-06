@@ -70,9 +70,18 @@ while(continuar == True):
             print("Fecha: %s, hora programada:%s \n", verFechaProgramada(i), verHoraInicio(i))
     
     elif opcion == 5:
-        reprogramarOrdenes();
+        nueva_fecha = input('Ingrese la nueva fecha: ')
+        nueva_hora = input("Ingrese la nueva hora: ")
+
+        while i < tamanio(ot):
+            o = recuperarOrden(ot, i)
+            modFechaProgramada(o, nueva_fecha)
+            modHoraInicio(o, nueva_hora)
+            i+=1
     
-    # elif opcion == 6:
+    elif opcion == 6:
+        
+    
                     
     # elif opcion == 7:
     #     continuar = False
