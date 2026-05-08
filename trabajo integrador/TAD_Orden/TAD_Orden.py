@@ -7,10 +7,7 @@ def cargarOrden(orden, id_maquina, nombre_equipo, sector_planta, tecnico, fecha,
     orden[2] = sector_planta
     orden[3] = tecnico
     orden[4] = fecha
-    orden[5] = hora
-    print (orden)  
-
-
+    orden[5] = hora 
 
 def verIDMaquina(orden):
     return orden[0]
@@ -29,8 +26,6 @@ def verFechaProgramada(orden):
 
 def verHoraInicio(orden):
     return orden[5]
-
-
 
 def modIDMaquina(orden, nuevo):
     orden[0] = nuevo

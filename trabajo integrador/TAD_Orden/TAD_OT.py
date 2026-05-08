@@ -11,7 +11,7 @@ def eliminarOrden(ot, orden):
     ot.remove(orden)
 
 def recuperarOrden(ot, i):
-    return ot[i-1]
+    return ot[i]
 
 def tamanio(ot):
     return len(ot)
