@@ -2,13 +2,16 @@ from TAD_Orden import *
 from TAD_OT import *
 from TADCola import *
 
+#Se genera la lista de ordenes
 ot = crearOT()
+#Variable booleana para el bucle principal while
 continuar = True
 
+#Se genera una lista con datos de prueba
 def datosprueba(ot):
     datos_prueba = [
         (10001, "Computadora", "Control", "Julian", "06-05-2026", "09:00"),
-        (10002, "Equipo 2", "Control", "Marcos", "06-06-2026", "15:00"),
+        (10002, "Equipo 2", "Control", "Marcos", "06-05-2026", "15:00"),
         (10003, "Impresora", "Finanzas", "Elias", "06-05-2026", "10:00"),
         (10004, "Algo", "RRHH", "Hernan", "20-05-2026", "11:00"),
         (10005, "Maquina", "RRHH", "Sandro", "25-05-2026", "12:00"),
@@ -19,6 +22,7 @@ def datosprueba(ot):
         cargarOrden(orden, id_maquina, nombre_equipo, sector_planta, tecnico, fecha, hora)
         agregarOrden(ot, orden)
     return ot
+
 
 datosprueba(ot)
 
@@ -42,16 +46,20 @@ while(continuar == True):
             sector_planta = input("Ingrese el sector de la planta: ")
             tecnico = input("Ingrese el nombre del tecnnico: ")
             fecha = input("Ingrese la fecha de la orden (DD-MM-YYYY): ")
-            hora = input("Ingrese la hora de la orden: ")
+            hora = input("Ingrese la hora de la orden(HH:MM): ")
 
             cargarOrden(orden, id_maquina, nombre_equipo, sector_planta, tecnico, fecha, hora)
             agregarOrden(ot, orden)
+            
+            print("-----------------------------")
+            print("Generando orden...")
             print("ID de la maquina: ", id_maquina)
             print("Nombre del equipo: ", nombre_equipo)
             print("Sector de la planta: ", sector_planta)
             print("Nombre del tecnnico: ", tecnico)
             print("Fecha: ", fecha)
             print("Hora de la orden: ", hora)
+            print("-----------------------------")
 
             seguir = input("Desea continuar agregando ordenes? (si/no)")
         
@@ -62,8 +70,8 @@ while(continuar == True):
             o = recuperarOrden(ot, i)
             
             if verIDMaquina(o) == id_maquina: 
-                nueva_fecha = input('Ingrese la nueva fecha: ')
-                nueva_hora = input("Ingrese la nueva hora: ")
+                nueva_fecha = input('Ingrese la nueva fecha(DD-MM-YYYY): ')
+                nueva_hora = input("Ingrese la nueva hora(HH:MM): ")
                 modFechaProgramada(o, nueva_fecha)
                 modHoraInicio(o, nueva_hora)
                 
@@ -92,14 +100,18 @@ while(continuar == True):
     
     elif opcion == 4:
         
+        print() #Salto de linea
         for i in range(0, tamanio(ot)):
             o = recuperarOrden(ot, i)
-            print("\nID Maquina orden: ", verIDMaquina(o))
-            print("Nombre del equipo: ", verNombreEquipo(o))
-            print("Sector de la planta: ", verSectorPlanta(o))
-            print("Tecnico Asignado: ", verTecnicoAsignado(o))
-            print("Fecha: \n", verFechaProgramada(o))
-            print("Hora programada: \n", verHoraInicio(o))
+            
+            print("ID: {} | Nombre equipo: {} | Sector: {} | Tecnico: {} | Fecha: {} | Hora: {}".format(verIDMaquina(o), verNombreEquipo(o), verSectorPlanta(o), verTecnicoAsignado(o), verFechaProgramada(o), verHoraInicio(o)))
+            
+            #print("\nID Maquina orden: ", verIDMaquina(o))
+            #print("Nombre del equipo: ", verNombreEquipo(o))
+            #print("Sector de la planta: ", verSectorPlanta(o))
+            #print("Tecnico Asignado: ", verTecnicoAsignado(o))
+            #print("Fecha: \n", verFechaProgramada(o))
+            #print("Hora programada: \n", verHoraInicio(o))
 
     elif opcion == 5:
         fecha_determinada = input("Ingrese la fecha de las ordenes que desea modificar: ")
@@ -118,9 +130,10 @@ while(continuar == True):
             i+=1
     
     elif opcion == 6:
-        print("a)Baja de ordenes por sector")
+        print("\na)Baja de ordenes por sector")
         print("b)Generar nueva cola de prioridades")
         opc = input("Ingrese la opcion seleccionada: ")
+        
         if opc == 'a':
             sector_borrar = input("Ingrese el sector de las ordenes que desea eliminar: ")
 
@@ -140,18 +153,16 @@ while(continuar == True):
                     o = recuperarOrden(ot, i)
 
                     if verFechaProgramada(o) == dia_especifico:
-                        o = (verNombreEquipo)
                         encolar(cola, o)
-                        
-                        
                 #Se desencolan y se muestran por pantalla las ordenes agregadas a la cola
-                
                 #Agregar while que revise si es vacia
-                for i in range(0, tamanio(ot)):
-                    print(o)
-                    o = desencolar(cola)
-                    print("Nombre del equipo:  ", verNombreEquipo(o))
-                    print("Tecnico Asignado: ", verTecnicoAsignado(o))
+                print("\n-----------------------------")
+                while esVacia(cola) != True:
+                    elem_cola = desencolar(cola)
+                    print("Nombre equipo: {} | Nombre Tecnico: {}".format(verNombreEquipo(elem_cola), verTecnicoAsignado(elem_cola)))
+
+                print("-----------------------------")
+
             else:
                 print('Opcion incorrecta. Intente nuevamente.')
     
