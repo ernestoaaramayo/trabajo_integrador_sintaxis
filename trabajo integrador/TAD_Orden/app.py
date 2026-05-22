@@ -1,6 +1,7 @@
 from TAD_Orden import *
 from TAD_OT import *
 from TADCola import *
+from datetime import *
 
 #Se genera la lista de ordenes
 ot = crearOT()
@@ -23,8 +24,10 @@ def datosprueba(ot):
         agregarOrden(ot, orden)
     return ot
 
+#inicializar datos de prueba
 datosprueba(ot)
 
+#Bucle principal de la aplicacion
 while(continuar == True):
     print("\n\n1) Alta de Ordenes de Trabajo")
     print("2) Modificación de Cronograma")
@@ -36,73 +39,108 @@ while(continuar == True):
     opcion = int(input("Ingrese una opcion: "))
 
     if opcion == 1:
-        seguir = "si"
         orden = crearOrden()
-        s = 0
-        
-        while seguir == "si":
-            #While para verificar si el ID ingresado encontro coincidencias, si las encuentra, vuelve a entrar al 
-            #bucle hasta que se ingrese una ID unica
-            while True:
-                id_maquina = int(input("Ingrese ID maquina: "))
 
-                existe = False
-
-                for i in range(tamanio(ot)):
-                    o = recuperarOrden(ot, i)
-
-                    if id_maquina == verIDMaquina(o):
-                        existe = True
-                        print("El ID ingresado ya existe.")
-                        break
-
-                if not existe:
+        #While para verificar si el ID ingresado encontro coincidencias, si las encuentra, vuelve a repetir el 
+        #bucle hasta que se ingrese una ID unica
+        while True:
+            id_maquina = int(input("Ingrese ID maquina: "))
+            existe = False
+            for i in range(tamanio(ot)):
+                o = recuperarOrden(ot, i)
+                if id_maquina == verIDMaquina(o):
+                    existe = True
+                    print("El ID ingresado ya existe.")
                     break
+            if not existe:
+                break
 
-            nombre_equipo = input("Ingrese el nombre del equipo: ")
-            sector_planta = input("Ingrese el sector de la planta: ")
-            tecnico = input("Ingrese el nombre del tecnnico: ")
-            fecha = input("Ingrese la fecha de la orden (DD-MM-YYYY): ")
-            hora = input("Ingrese la hora de la orden(HH:MM): ")
-                    
-            cargarOrden(orden, id_maquina, nombre_equipo, sector_planta, tecnico, fecha, hora)
-            agregarOrden(ot, orden)
-            
-            print("-----------------------------")
-            print("Generando orden...")
-            print("ID de la maquina: ", id_maquina)
-            print("Nombre del equipo: ", nombre_equipo)
-            print("Sector de la planta: ", sector_planta)
-            print("Nombre del tecnnico: ", tecnico)
-            print("Fecha: ", fecha)
-            print("Hora de la orden: ", hora)
-            print("-----------------------------")
+        nombre_equipo = input("Ingrese el nombre del equipo: ")
+        sector_planta = input("Ingrese el sector de la planta: ")
+        tecnico = input("Ingrese el nombre del tecnnico: ")
 
-            seguir = input("Desea continuar agregando ordenes? (si/no)")      
-    
+        # Bucle para la Fecha
+        while True:
+            try:
+                #Aunque se ingrese en formato DD/MM/AAAA se guarda en formato AAAA/MM/DD
+                f = input("Ingrese fecha (DD/MM/AAAA): ")
+                fecha_valida = datetime.strptime(f, "%d/%m/%Y").date()
+                if fecha_valida < date.today():
+                    print("Inválido. La fecha es anterior a hoy.")
+                    continue
+                break
+            except ValueError:
+                print("Formato de fecha inválido.")
+
+        #Bucle para la Hora
+        while True:
+            try:
+                h = input("Ingrese hora (HH:MM): ")
+                hora_valida = datetime.strptime(h, "%H:%M").time()
+                break
+            except ValueError:
+                print("Formato de hora inválido.")
+                
+        cargarOrden(orden, id_maquina, nombre_equipo, sector_planta, tecnico, fecha_valida, hora_valida)
+        agregarOrden(ot, orden)
+
+        print("-----------------------------")
+        print("Generando orden...")
+        print("ID de la maquina: ", id_maquina)
+        print("Nombre del equipo: ", nombre_equipo)
+        print("Sector de la planta: ", sector_planta)
+        print("Nombre del tecnnico: ", tecnico)
+        print("Fecha: ", fecha_valida)
+        print("Hora de la orden: ", hora_valida)
+        print("-----------------------------")
+
     elif opcion == 2:
-        id_maquina = int(input("Ingrese el id de maquina: "))
+        encontrada = False
+        id_maquina = int(input("Ingrese ID de maquina: "))
         for i in range(0, tamanio(ot)):
             o = recuperarOrden(ot, i)
-            
+
             if verIDMaquina(o) == id_maquina: 
-                nueva_fecha = input('Ingrese la nueva fecha(DD-MM-YYYY): ')
-                nueva_hora = input("Ingrese la nueva hora(HH:MM): ")
-                modFechaProgramada(o, nueva_fecha)
-                modHoraInicio(o, nueva_hora)
-                
+                encontrada = True
+
+                #Nueva fecha
+                while True:
+                    try:
+                        f = input("Ingrese fecha (DD/MM/AAAA): ")
+                        nueva_fecha_valida = datetime.strptime(f, "%d/%m/%Y").date()
+                        if nueva_fecha_valida < date.today():
+                            print("Inválido. La fecha es anterior a hoy.")
+                            continue
+                        break
+                    except ValueError:
+                        print("Formato de fecha inválido.")
+
+                #Nueva hora
+                while True:
+                    try:
+                        h = input("Ingrese hora (HH:MM): ")
+                        nueva_hora_valida = datetime.strptime(h, "%H:%M").time()
+                        break
+                    except ValueError:
+                        print("Formato de hora inválido.")
+                modFechaProgramada(o, nueva_fecha_valida)
+                modHoraInicio(o, nueva_hora_valida)
+                break
+
+        if not encontrada:
             print('No se encontro la orden.');
-    
+
     elif opcion == 3:
-        id_maquina = int(input("Ingrese el id de maquina: "))
+        id_maquina = int(input("Ingrese el id de maquina a eliminar: "))
         i = 0
-        id_valido=False
-        
+        encontrada = False
+
         while i < tamanio(ot):
             o = recuperarOrden(ot, i)
-            
+
             if verIDMaquina(o) == id_maquina:
-                id_valido = True
+                encontrada = True
+                
                 print("Nombre equipo de orden a eliminar: ", verNombreEquipo(o))
                 eliminarOrden(ot, o)
                 print("Orden eliminada.") 
@@ -110,38 +148,57 @@ while(continuar == True):
             else:
                 i+=1
                 
-        if id_valido == False:
+        if not encontrada:
             print("No se encontro la orden.")            
-        
+
     elif opcion == 4:
-        
+
         print() #Salto de linea
         for i in range(0, tamanio(ot)):
             o = recuperarOrden(ot, i)
-            
+
             print("ID: {} | Nombre equipo: {} | Sector: {} | Tecnico: {} | Fecha: {} | Hora: {}".format(verIDMaquina(o), verNombreEquipo(o), verSectorPlanta(o), verTecnicoAsignado(o), verFechaProgramada(o), verHoraInicio(o)))
 
     elif opcion == 5:
         fecha_determinada = input("Ingrese la fecha de las ordenes que desea modificar: ")
-        nueva_fecha = input('Ingrese la nueva fecha: ')
-        nueva_hora = input("Ingrese la nueva hora: ")
-        
+
+        #Nueva fecha
+        while True:
+            try:
+                f = input("Ingrese fecha (DD/MM/AAAA): ")
+                nueva_fecha_valida = datetime.strptime(f, "%d/%m/%Y").date()
+                if nueva_fecha_valida < date.today():
+                    print("Inválido. La fecha es anterior a hoy.")
+                    continue
+                break
+            except ValueError:
+                print("Formato de fecha inválido.")
+
+        #Nueva hora
+                while True:
+                    try:
+                        h = input("Ingrese hora (HH:MM): ")
+                        nueva_hora_valida = datetime.strptime(h, "%H:%M").time()
+                        break
+                    except ValueError:
+                        print("Formato de hora inválido.")
+
         i = 0
         while i < tamanio(ot):
             o = recuperarOrden(ot, i)
 
             if verFechaProgramada(o) == fecha_determinada:
-                modFechaProgramada(o, nueva_fecha)
-                modHoraInicio(o, nueva_hora)
+                modFechaProgramada(o, nueva_fecha_valida)
+                modHoraInicio(o, nueva_hora_valida)
                 print("Nueva fecha de la orden ", verIDMaquina(o),": ",verFechaProgramada(o))
-            
+
             i+=1
-    
+
     elif opcion == 6:
         print("\na)Baja de ordenes por sector")
         print("b)Generar nueva cola de prioridades")
         opc = input("Ingrese la opcion seleccionada: ")
-        
+
         if opc == 'a':
             sector_borrar = input("Ingrese el sector de las ordenes que desea eliminar: ")
 
@@ -155,7 +212,7 @@ while(continuar == True):
         else:
             if opc == 'b':
                 cola = crearCola()
-                dia_especifico = input("Ingrese el dia de las ordenes que desea agregar a la cola: ")
+                dia_especifico = input("Ingrese el dia de las ordenes que desea agregar a la cola(AAAA-MM-DD): ")
                 #Se encolan las ordenes del dia determinado
                 for i in range(0, tamanio(ot)):
                     o = recuperarOrden(ot, i)
