@@ -195,29 +195,30 @@ while(continuar == True):
             i+=1
 
     elif opcion == 6:
+
         print("\na)Baja de órdenes por sector")
         print("b)Generar nueva cola de prioridades")
-        opc = input("Ingrese la opción seleccionada: ")
-
-        if opc == 'a':
-            sector_borrar = input("Ingrese el sector de las órdenes que desea eliminar: ")
-
-            i = 0
-            while i < tamanio(ot):
-                o = recuperarOrden(ot, i)
-                if sector_borrar == verSectorPlanta(o):
-                    eliminarOrden(ot, o)
-                    print("Orden eliminada: ", verIDMaquina(o))
-                else:
-                    i+=1
-        else:
-            if opc == 'b':
+        
+        while True:
+            opc = input("Ingrese la opción seleccionada: ")
+            
+            if opc == 'a':
+                sector_borrar = input("Ingrese el sector de las órdenes que desea eliminar: ")
+                i = 0
+                while i < tamanio(ot):
+                    o = recuperarOrden(ot, i)
+                    if sector_borrar == verSectorPlanta(o):
+                        eliminarOrden(ot, o)
+                        print("Orden eliminada: ", verIDMaquina(o))
+                    else:
+                        i+=1
+                break        
+            elif opc == 'b':
                 cola = crearCola()
-                dia_especifico = input("Ingrese el día de las órdenes que desea agregar a la cola(AAAA-MM-DD): ")
+                dia_especifico = datetime.strptime(input("Ingrese el día de las órdenes que desea agregar a la cola(DD/MM/AAAA): "), "%d/%m/%Y").date()
                 #Se encolan las ordenes del dia determinado
                 for i in range(0, tamanio(ot)):
                     o = recuperarOrden(ot, i)
-
                     if verFechaProgramada(o) == dia_especifico:
                         encolar(cola, o)
                 #Se desencolan y se muestran por pantalla las ordenes agregadas a la cola
@@ -227,10 +228,10 @@ while(continuar == True):
                     elem_cola = desencolar(cola)
                     print("Nombre equipo: {} | Nombre Técnico: {}".format(verNombreEquipo(elem_cola), verTecnicoAsignado(elem_cola)))
                 print("-----------------------------")
-
+                break       
             else:
                 print('Opción incorrecta. Intente nuevamente.')
-    
+
     elif opcion == 7:
         print("Saliendo...")
         break
